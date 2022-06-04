@@ -22,7 +22,7 @@ def gamerules():
     play = input("First, two players log into the game using a username and password stored in a database.")
     play = input("Once logged in, 5 rounds of dice rolling begin")
     play = input(
-        "After pressing enter, two dice are rolled for each player. You can also exit the game at this staege if you want to.")
+        "After pressing enter, two dice are rolled for each player. You can also exit the game at this stage if you want to.")
     play = input(
         "The two dice are added up. If the sum is even, 10 points are added on, but if it's odd then 5 points are taken off")
     play = input("If both dice are the same, an extra dice is rolled and added to their score for the current round")
@@ -162,6 +162,9 @@ def dicegame():
                 a = randrange(1, 6)
                 playersScores[playersList2.index(x)] += a
                 playerTotals[playersList2.index(x)] += a
+                play = input(playersList[playersList2.index(x)] + ", you rolled a double so press enter to roll an extra dice")
+                print("Rolling...")
+                time.sleep(1.5)
                 print(str(playersList[playersList2.index(x)]) + " rolled an extra " + str(
                     a) + ", bringing their score to " + str(playersScores[playersList2.index(x)]))
                 time.sleep(2)
@@ -169,13 +172,14 @@ def dicegame():
     print("")
     for x2 in range(len(playersList)):
         print(str(playersList[x2]) + " got " + str(playerTotals[x2]) + " points")
-        time.sleep(1)
+        time.sleep(2)
         if playerTotals[x2] == 69:
             print("Nice")
     if playerTotals[0] > playerTotals[1]:
         print(playersList[0] + " wins by " + str((playerTotals[0] - playerTotals[1])) + " points")
     elif playerTotals[1] > playerTotals[0]:
         print(playersList[1] + " wins by " + str((playerTotals[1] - playerTotals[0])) + " points")
+    time.sleep(5)
 
     if playerTotals[0] == playerTotals[1]:
         time.sleep(2)
