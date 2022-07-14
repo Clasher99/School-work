@@ -24,12 +24,15 @@ def gamerules():
     play = input(
         "After pressing enter, two dice are rolled for each player. You can also exit the game at this stage if you want to.")
     play = input(
-        "The two dice are added up. If the sum is even, 10 points are added on, but if it's odd then 5 points are taken off")
+        "The two dice are added up. If the sum is even, 10 points are added on, but if it's odd, 5 points are taken off")
     play = input("If both dice are the same, an extra dice is rolled and added to their score for the current round")
     play = input(
         "After 5 rounds, all the scores from previous rounds are added up, and the player with the highest points wins the game")
     play = input(
         "The score is then stored in a database, and you can access the top scores from the main menu this way.")
+    play = input(
+        "Press enter again to go back to the main menu")
+    time.sleep(1.5)
 
 
 def leaderboards():
@@ -45,14 +48,15 @@ def leaderboards():
     myresult = mycursor.fetchall()
     for x in myresult:
         print(x)
+        time.sleep(0.5)
 
 
 def playAgain():
     print("""
-            1. Play again
-            2. Leaderboards
-            3. Exit to main menu
-            4. Exit
+            1: Play again
+            2: Play again with different players
+            3: Leaderboards
+            4: Exit Program
             """)
 
     playagain = input("Enter your choice [1-4]:")
@@ -60,10 +64,11 @@ def playAgain():
         dicegame()
     elif playagain == "2":
         print("")
-        leaderboards()
+        time.sleep(2)
+        login()
         dicegame()
     elif playagain == "3":
-        menu()
+        leaderboards()
     elif playagain == "4":
         exit()
     else:
@@ -73,7 +78,12 @@ def playAgain():
 def menu():
     loop = True
     while loop:
-        printMenu()
+        print("""
+            1: Play the Dice Game
+            2: Leaderboards
+            3: Read the game rules
+            4: Exit Program
+            """)
         choice = input("Enter your choice [1-3]:")
         if choice == "1":
             login()
@@ -82,6 +92,8 @@ def menu():
             print("")
             leaderboards()
         elif choice == "3":
+            gamerules()
+        elif choice == "4":
             loop = False
         else:
             print("Wrong option, try again")
@@ -113,9 +125,10 @@ def login():
 
 
 def dicegame():
-    player1 = [0, 0]
-    player2 = [0, 0]
-
+    global sumScore, z
+    player1dice = [991, 992]
+    player2dice = [993, 994]
+    playersDices = [player1dice, player2dice]
     player1Score = 0
     player2Score = 0
     playertotal1 = 0
@@ -125,51 +138,55 @@ def dicegame():
     playersScores = [player1Score, player2Score]
     playerTotals = [playertotal1, playertotal2]
     playerFinalScores = [player1final, player2final]
-    playersList2 = [player1, player2]
     time.sleep(1)
     for i in range(5):
         print("")
         print("Round " + str(i + 1))
-        play = input("Press enter to roll the dice, or press 1 to go back to main menu")
-        if play == "1":
-            playAgain()
-        print("Rolling...")
-        time.sleep(3)
-        for player in playersList2:
+        for y in range(len(playersList)):
+            play = input(playersList[y] + ", press enter to roll the dice, or press 1 to go back to main menu ")
+            if play == "1":
+                playAgain()
+            print("Rolling...")
+            time.sleep(3)
             sumScore = 0
-            for index in range(2):
-                player[index] = randrange(1, 6)
-                sumScore += player[index]
+            for z in range(len(playersDices[y])):
+                player = randrange(1, 6)
+                playersDices[y][z] = player
+                sumScore += player
+            print(playersList[y], "rolled", str(playersDices[y][0]), "and",
+                  str(playersDices[y][1]), "and got a total of", str(
+                    sumScore), "points")
             if sumScore % 2 == 0:
                 sumScore += 10
+                print(playersList[y], "'s roll was even, so their score goes up to", sumScore, "points")
             else:
                 sumScore -= 5
                 if sumScore <= 0:
                     sumScore = 0
+                print(playersList[y], "'s roll was odd, so their score goes down to", sumScore, "points")
 
-            playersScores[playersList2.index(player)] = sumScore
-            playerTotals[playersList2.index(player)] += sumScore
+            playersScores[y] = sumScore
+            playerTotals[y] += sumScore
 
-        for x in range(len(playersList)):
-            print(playersList[x] + " rolled " + str(playersList2[x][0]) + " and " + str(
-                playersList2[x][1]) + " and got " + str(
-                playersScores[x]) + " points")
-            time.sleep(1)
-        time.sleep(1)
-        for x in playersList2:
-            if x[0] == x[1]:
+            print(playersList[y], "rolled", str(playersDices[y][0]), "and",
+                  str(playersDices[y][1]), "and got", str(
+                playersScores[y]), " points")
+            time.sleep(3)
+            if playersDices[y][0] == playersDices[y][1]:
                 time.sleep(2)
                 a = randrange(1, 6)
-                playersScores[playersList2.index(x)] += a
-                playerTotals[playersList2.index(x)] += a
-                play = input(playersList[playersList2.index(x)] + ", you rolled a double so press enter to roll an extra dice")
+                playersScores[y] += a
+                playerTotals[y] += a
+                play = input(playersList[y] + ", you rolled a double so press enter to roll an extra dice")
                 print("Rolling...")
                 time.sleep(1.5)
-                print(str(playersList[playersList2.index(x)]) + " rolled an extra " + str(
-                    a) + ", bringing their score to " + str(playersScores[playersList2.index(x)]))
+                print(str(playersList[y]) + " rolled an extra " + str(
+                    a) + ", bringing their score to " + str(playersScores[y]))
                 time.sleep(2)
 
     print("")
+    print("The dice game has ended! Here are the results:")
+    time.sleep(1.5)
     for x2 in range(len(playersList)):
         print(str(playersList[x2]) + " got " + str(playerTotals[x2]) + " points")
         time.sleep(2)
@@ -211,14 +228,6 @@ def dicegame():
                             playerTotals[0] if playerTotals[0] > playerTotals[1] else playerTotals[1],
                             dt_string)
     playAgain()
-
-
-def printMenu():
-    print("""
-        1.Start Game
-        2.Check 5 best scores
-        3.Exit
-        """)
 
 
 def createDatabaseRunOnce():
