@@ -10,7 +10,8 @@ database = {
     "Harry": "uhhh",
     "Josh": "phft",
     "doormat": "power2266",
-    "geo egg": "eee"
+    "geo egg": "eee",
+    "euan": "sussy"
 }
 
 playersList = ['player1', "player2"]
@@ -72,7 +73,7 @@ def playAgain():
     elif playagain == "4":
         exit()
     else:
-        print("Wrong option selection. Enter any key to try again..")
+        print("Invalid input, try again: ")
 
 
 def menu():
@@ -100,7 +101,6 @@ def menu():
 
 
 def login():
-    loggedin = False
     for x in playersList:
         username = input("Player " + str(playersList.index(x) + 1) + " Enter Name: ")
         counter = 0
@@ -121,13 +121,12 @@ def login():
                 exit()
         print("Hello " + username)
         playersList[playersList.index(x)] = username
-        loggedin = True
 
 
 def dicegame():
     global sumScore, z
-    player1dice = [991, 992]
-    player2dice = [993, 994]
+    player1dice = [0, 0]
+    player2dice = [0, 0]
     playersDices = [player1dice, player2dice]
     player1Score = 0
     player2Score = 0
@@ -142,13 +141,17 @@ def dicegame():
     for i in range(5):
         print("")
         print("Round " + str(i + 1))
+        time.sleep(1.5)
+        print("")
         for y in range(len(playersList)):
             play = input(playersList[y] + ", press enter to roll the dice, or press 1 to go back to main menu ")
             if play == "1":
                 playAgain()
+            print("")
             print("Rolling...")
             time.sleep(3)
             sumScore = 0
+            print("")
             for z in range(len(playersDices[y])):
                 player = randrange(1, 6)
                 playersDices[y][z] = player
@@ -158,35 +161,41 @@ def dicegame():
                     sumScore), "points")
             if sumScore % 2 == 0:
                 sumScore += 10
-                print(playersList[y], "'s roll was even, so their score goes up to", sumScore, "points")
+                time.sleep(3)
+                print(playersList[y] + "'s roll was even, so their score goes up to", sumScore, "points")
             else:
                 sumScore -= 5
                 if sumScore <= 0:
                     sumScore = 0
-                print(playersList[y], "'s roll was odd, so their score goes down to", sumScore, "points")
+                time.sleep(3)
+                print(playersList[y] + "'s roll was odd, so their score goes down to", sumScore, "points")
 
             playersScores[y] = sumScore
             playerTotals[y] += sumScore
 
-            print(playersList[y], "rolled", str(playersDices[y][0]), "and",
-                  str(playersDices[y][1]), "and got", str(
-                playersScores[y]), " points")
             time.sleep(3)
             if playersDices[y][0] == playersDices[y][1]:
+                print("")
                 time.sleep(2)
                 a = randrange(1, 6)
                 playersScores[y] += a
                 playerTotals[y] += a
                 play = input(playersList[y] + ", you rolled a double so press enter to roll an extra dice")
+                print("")
                 print("Rolling...")
+                print("")
                 time.sleep(1.5)
                 print(str(playersList[y]) + " rolled an extra " + str(
                     a) + ", bringing their score to " + str(playersScores[y]))
                 time.sleep(2)
+            print("")
 
     print("")
     print("The dice game has ended! Here are the results:")
     time.sleep(1.5)
+
+    winplayer = ""
+    winscore = 0
     for x2 in range(len(playersList)):
         print(str(playersList[x2]) + " got " + str(playerTotals[x2]) + " points")
         time.sleep(2)
@@ -194,8 +203,12 @@ def dicegame():
             print("Nice")
     if playerTotals[0] > playerTotals[1]:
         print(playersList[0] + " wins by " + str((playerTotals[0] - playerTotals[1])) + " points")
+        winplayer = playersList[0]
+        winscore = playerTotals[0]
     elif playerTotals[1] > playerTotals[0]:
         print(playersList[1] + " wins by " + str((playerTotals[1] - playerTotals[0])) + " points")
+        winplayer = playersList[1]
+        winscore = playerTotals[1]
     time.sleep(5)
 
     if playerTotals[0] == playerTotals[1]:
@@ -205,28 +218,36 @@ def dicegame():
         time.sleep(2)
         endgame = False
         while endgame == False:
-            for x4 in playersList:
+            for x4 in range(2):
                 finaldice = randrange(1, 6)
-                playerFinalScores[playersList.index(x4)] = finaldice
+                playerFinalScores[x4] = finaldice
+                print("")
+                play = input(playersList[x4] + ", press enter to roll your final dice")
+                time.sleep(2)
             if playerFinalScores[0] > playerFinalScores[1]:
                 endgame = True
                 print(playersList[0] + " got " + str(playerFinalScores[0]) + " and " + playersList[1] + " got " + str(
                     playerFinalScores[1]) + " so " + playersList[0] + " wins! ")
+                winplayer = playersList[0]
+                winscore = playerTotals[0]
+                time.sleep(3)
                 break
             elif playerFinalScores[1] > playerFinalScores[0]:
-                endgame = False
+                endgame = True
                 print(playersList[0] + " got " + str(playerFinalScores[0]) + " and " + playersList[1] + " got " + str(
                     playerFinalScores[1]) + " so " + playersList[1] + " wins! ")
+                winplayer = playersList[1]
+                winscore = playerTotals[1]
+                time.sleep(3)
                 break
             else:
-                endgame = False
+                print("Both players got", str(playerFinalScores[0]) + ", so they roll again.")
+                time.sleep(3)
 
     now = datetime.datetime.now()
     dt_string = now.strftime("%H:%M on %d/%m/%Y")
 
-    insertVariableIntoTable(playersList[0] if playerTotals[0] > playerTotals[1] else playersList[1],
-                            playerTotals[0] if playerTotals[0] > playerTotals[1] else playerTotals[1],
-                            dt_string)
+    insertVariableIntoTable(winplayer, winscore, dt_string)
     playAgain()
 
 
@@ -265,4 +286,3 @@ def insertVariableIntoTable(name, points, date):
 
 
 menu()
-
